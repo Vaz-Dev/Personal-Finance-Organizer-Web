@@ -1,0 +1,21 @@
+﻿
+@{
+    ViewData["Title"] = "Send";
+}
+
+<h1>Send</h1>
+
+<form asp-action="UploadOfx" enctype="multipart/form-data" method="post" class="row">
+    <div class="col">
+        <label> Send .OFX file: </label>
+        <input type="file" name="ofxFile" accept=".ofx"/>
+    </div>
+    <button class="btn btn-primary col" type="submit"> Send! </button>
+</form>
+
+@if (ViewBag.Message != null)
+    {
+            <div class="alert alert-success row mt-1">
+            @ViewBag.Message
+            </div>
+    }
