@@ -16,6 +16,9 @@
 @if (ViewBag.Message != null)
     {
             <div class="alert alert-success row mt-1">
-            @ViewBag.Message
+                <p class="col">@ViewBag.Message</p>
+                <form method="post" asp-action="Process">
+                    <button class="btn btn-success col" type="submit"=> Continue </button>
+                </form>
             </div>
     }

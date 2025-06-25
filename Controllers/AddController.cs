@@ -1,4 +1,5 @@
-﻿using System.Xml.Linq;
+﻿using System.Security.Cryptography.X509Certificates;
+using System.Xml.Linq;
 using Microsoft.AspNetCore.Mvc;
 
 namespace PFO_Web.Controllers
@@ -14,6 +15,7 @@ namespace PFO_Web.Controllers
         [HttpPost]
         public async Task<IActionResult> UploadOfx(IFormFile ofxFile)
         {
+
             if (ofxFile == null || ofxFile.Length == 0)
                 return BadRequest("No file uploaded.");
 
@@ -53,9 +55,40 @@ namespace PFO_Web.Controllers
                     })
                     .ToList();
 
+                try
+                {
+                    TempData["OfxString"] = xmlContent;
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest($"Error processing transactions: {ex.Message}");
+                }
                 ViewBag.Message = $"{transactions.Count} transactions parsed successfully!";
+                
                 return View("Send");
             }
         }
+
+        [HttpPost]
+
+        public IActionResult Process()
+        {
+            var xmlContent = TempData["OfxString"]?.ToString();
+            var xml = XDocument.Parse(xmlContent);
+
+            var transactions = xml.Descendants("STMTTRN")
+                .Select(x => new
+                {
+                    Type = (string)x.Element("TRNTYPE"),
+                    Date = (string)x.Element("DTPOSTED"),
+                    Amount = decimal.Parse((string)x.Element("TRNAMT")),
+                    FitId = (string)x.Element("FITID"),
+                    Memo = (string)x.Element("MEMO")
+                })
+                .ToList();
+            ViewBag.Message = $"{transactions.Count} transactions parsed successfully!";
+            return View("Process");
+        }
+
     }
 }
