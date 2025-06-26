@@ -12,3 +12,21 @@
             </div>
     }
 
+@foreach (var transaction in ViewBag.Transactions)
+{
+		<div class="row">
+			<div class="col">
+				<p>@transaction.Type</p>
+			</div>
+			<div class="col">
+				<p>@transaction.Memo</p>
+			</div>
+			<div class="col">
+				<p>@transaction.Date</p>
+			</div>
+			<div class="col">
+				<p>@transaction.Amount.ToString("C")</p>
+			</div>
+		</div>
+}
+

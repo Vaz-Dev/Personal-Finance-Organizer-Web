@@ -1,5 +1,7 @@
-﻿using System.Security.Cryptography.X509Certificates;
+﻿using System.Globalization;
+using System.Security.Cryptography.X509Certificates;
 using System.Xml.Linq;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace PFO_Web.Controllers
@@ -48,8 +50,10 @@ namespace PFO_Web.Controllers
                     .Select(x => new
                     {
                         Type = (string)x.Element("TRNTYPE"),
-                        Date = (string)x.Element("DTPOSTED"),
-                        Amount = decimal.Parse((string)x.Element("TRNAMT")),
+                        Date = DateTime.ParseExact(((string)x.Element("DTPOSTED") ?? "").Substring(0, ((string)x.Element("DTPOSTED") ?? "").Length - 14),
+                        "yyyyMMdd",
+                        CultureInfo.InvariantCulture),
+                        Amount = decimal.Parse((string)x.Element("TRNAMT"), CultureInfo.InvariantCulture),
                         FitId = (string)x.Element("FITID"),
                         Memo = (string)x.Element("MEMO")
                     })
@@ -80,13 +84,16 @@ namespace PFO_Web.Controllers
                 .Select(x => new
                 {
                     Type = (string)x.Element("TRNTYPE"),
-                    Date = (string)x.Element("DTPOSTED"),
-                    Amount = decimal.Parse((string)x.Element("TRNAMT")),
+                    Date = DateOnly.ParseExact(((string)x.Element("DTPOSTED") ?? "").Substring(0, ((string)x.Element("DTPOSTED") ?? "").Length - 14),
+                    "yyyyMMdd", 
+                    CultureInfo.InvariantCulture),
+                    Amount = decimal.Parse((string)x.Element("TRNAMT"), CultureInfo.InvariantCulture),
                     FitId = (string)x.Element("FITID"),
                     Memo = (string)x.Element("MEMO")
                 })
                 .ToList();
             ViewBag.Message = $"{transactions.Count} transactions parsed successfully!";
+            ViewBag.Transactions = transactions;
             return View("Process");
         }
 
