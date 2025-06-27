@@ -3,11 +3,15 @@ using System.Security.Cryptography.X509Certificates;
 using System.Xml.Linq;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using PFO_Web.Services;
 
 namespace PFO_Web.Controllers
 {
     public class AddController : Controller
     {
+
+        private readonly XmlService _xmlService = new();
+
         [HttpGet]
         public IActionResult Send()
         {
@@ -49,13 +53,12 @@ namespace PFO_Web.Controllers
                 var transactions = xml.Descendants("STMTTRN")
                     .Select(x => new
                     {
-                        Type = (string)x.Element("TRNTYPE"),
                         Date = DateTime.ParseExact(((string)x.Element("DTPOSTED") ?? "").Substring(0, ((string)x.Element("DTPOSTED") ?? "").Length - 14),
                         "yyyyMMdd",
                         CultureInfo.InvariantCulture),
                         Amount = decimal.Parse((string)x.Element("TRNAMT"), CultureInfo.InvariantCulture),
                         FitId = (string)x.Element("FITID"),
-                        Memo = (string)x.Element("MEMO")
+                        Meta = (string)x.Element("MEMO")
                     })
                     .ToList();
 
@@ -83,13 +86,12 @@ namespace PFO_Web.Controllers
             var transactions = xml.Descendants("STMTTRN")
                 .Select(x => new
                 {
-                    Type = (string)x.Element("TRNTYPE"),
                     Date = DateOnly.ParseExact(((string)x.Element("DTPOSTED") ?? "").Substring(0, ((string)x.Element("DTPOSTED") ?? "").Length - 14),
                     "yyyyMMdd", 
                     CultureInfo.InvariantCulture),
                     Amount = decimal.Parse((string)x.Element("TRNAMT"), CultureInfo.InvariantCulture),
                     FitId = (string)x.Element("FITID"),
-                    Memo = (string)x.Element("MEMO")
+                    Meta = (string)x.Element("MEMO")
                 })
                 .ToList();
             ViewBag.Message = $"{transactions.Count} transactions parsed successfully!";

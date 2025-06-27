@@ -7,9 +7,9 @@
 
         public decimal Amount { get; set; }
 
-        public DateTime Date { get; set; }
+        public DateOnly Date { get; set; }
 
-        public string? Description { get; set; }
+        public string? Meta { get; set; }
 
         // to do: add services logic to confirm if user does not want to set Category, default it to "Others"
         public Category? Category { get; set; }
