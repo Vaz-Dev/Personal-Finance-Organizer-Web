@@ -1,24 +1,26 @@
 ﻿@{
     ViewData["Title"] = "New Category";
 }
+@model PFO_Web.Models.Data
 
-<h1>New Category</h1>
+<h1>New Category - @Model.Categories.Count Existing categories.</h1>
 
 <form asp-action="NewCategoryForm" enctype="multipart/form-data" method="post" class="col">
     <label>Name:</label>
 	<input type="text" name="categoryName" class="form-control" required />
     <label>Type:</label>
-	<select name="categoryType" class="form-select" required>
+	<select name="type" class="form-select" required>
 		<option value="">Select Type</option>
-		<option value="Expense">Expense</option>
-		<option value="Income">Income</option>
-	<button class="btn btn-primary col" type="submit"> Create! </button>
+		<option value="@TransactionType.Expense">Expense</option>
+		<option value="@TransactionType.Income">Income</option>
+    </select>
+	<button class="btn btn-primary mt-1" type="submit"> Create! </button>
 </form>
 
 @if (ViewBag.Success != null)
 {
                 <div class="alert alert-success row mt-1">
-                    <p class="col">@ViewBag.Message</p>
+                    <p class="col">@ViewBag.Success</p>
                     <form method="get" asp-action="NewCategory">
                         <button class="btn btn-success col" type="submit"=> Create another </button>
                     </form>
@@ -28,6 +30,6 @@
 @if (ViewBag.Danger != null)
 {
                     <div class="alert alert-danger row mt-1">
-                        <p class="col">@ViewBag.Message</p>
+                        <p class="col">@ViewBag.Danger</p>
                     </div>
 }
