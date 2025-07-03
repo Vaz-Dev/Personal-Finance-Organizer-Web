@@ -4,6 +4,7 @@ using System.Xml.Linq;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using PFO_Web.Services;
+using PFO_Web.Models;
 
 namespace PFO_Web.Controllers
 {
@@ -15,12 +16,14 @@ namespace PFO_Web.Controllers
         [HttpGet]
         public IActionResult Send()
         {
-            return View();
+            var data = _xmlService.Load();
+            return View(data);
         }
 
         [HttpPost]
         public async Task<IActionResult> UploadOfx(IFormFile ofxFile)
         {
+            var data = _xmlService.Load();
 
             if (ofxFile == null || ofxFile.Length == 0)
                 return BadRequest("No file uploaded.");
@@ -72,7 +75,7 @@ namespace PFO_Web.Controllers
                 }
                 ViewBag.Message = $"{transactions.Count} transactions parsed successfully!";
                 
-                return View("Send");
+                return View("Send", data);
             }
         }
 
@@ -82,6 +85,7 @@ namespace PFO_Web.Controllers
         {
             var xmlContent = TempData["OfxString"]?.ToString();
             var xml = XDocument.Parse(xmlContent);
+            var data = _xmlService.Load();
 
             var transactions = xml.Descendants("STMTTRN")
                 .Select(x => new
@@ -96,7 +100,16 @@ namespace PFO_Web.Controllers
                 .ToList();
             ViewBag.Message = $"{transactions.Count} transactions parsed successfully!";
             ViewBag.Transactions = transactions;
-            return View("Process");
+            return View(data);
+        }
+
+        [HttpPost]
+
+        public IActionResult processCategories(List<Transaction> transactions)
+        {
+            var data = _xmlService.Load();
+
+            return View("Process", data);
         }
 
     }

@@ -3,7 +3,8 @@
 }
 @model PFO_Web.Models.Data
 
-<h1>New Category - @Model.Categories.Count Existing categories.</h1>
+<h1>New Category</h1>
+<h2>@Model.Categories.Count Existing categories.</h2>
 
 <form asp-action="NewCategoryForm" enctype="multipart/form-data" method="post" class="col">
     <label>Name:</label>

@@ -1,29 +1,48 @@
 ﻿
 @{
-    ViewData["Title"] = "Process";
+	ViewData["Title"] = "Process";
 }
 
-<h1>Process Upload</h1>
+<h1>Process Upload - Select each transaction's category.</h1>
+<h2>@Model.Transactions.Count Existing transactions.</h2>
 
 @if (ViewBag.Message != null)
-    {
-            <div class="alert alert-success row mt-1">
-                <p class="col">@ViewBag.Message</p>
-            </div>
-    }
-
-@foreach (var transaction in ViewBag.Transactions)
 {
-		<div class="row">
-			<div class="col">
-				<p>@transaction.Meta</p>
-			</div>
-			<div class="col">
-				<p>@transaction.Date</p>
-			</div>
-			<div class="col">
-				<p>@transaction.Amount.ToString("C")</p>
-			</div>
-		</div>
+	<div class="alert alert-success row mt-1">
+		<p class="col">@ViewBag.Message</p>
+	</div>
 }
+
+<form asp-action="processCategories" enctype="multipart/form-data" method="post" class="row">
+	@for (int i = 0; i < ViewBag.Transactions.Count; i++)
+	{
+			
+			<div class="row">
+				<div class="col">
+					<p>@ViewBag.Transactions[i].Meta</p>
+						<input type="text" name="transactions[@i].Meta" value="@ViewBag.Transactions[i].Meta" hidden />
+				</div>
+				<div class="col">
+					<p>@ViewBag.Transactions[i].Date</p>
+						<input type="date" name="transactions[@i].Date" value="@ViewBag.Transactions[i].Date.ToString("yyyy-MM-dd")" hidden />
+				</div>
+				<div class="col">
+					<p>@ViewBag.Transactions[i].Amount.ToString("C")</p>
+						<input type="hidden" name="transactions[@i].Amount" value="@ViewBag.Transactions[i].Amount" />
+				</div>
+				<div class="col">
+					<select name="category">
+								<option value="" selected>Other</option>
+					@for (int x = 0; x < Model.Categories.Count; x++)
+					{
+											<option value="@Model.Categories[x]">@Model.Categories[x].Name</option>
+					}
+					</select>
+				</div>
+			</div>
+
+		}
+		<button class="btn btn-primary mt-1" type="submit"> Done! </button>
+	</form>
+
 
