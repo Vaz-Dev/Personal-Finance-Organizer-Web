@@ -17,13 +17,16 @@ namespace PFO_Web.Controllers
         public IActionResult Send()
         {
             var data = _xmlService.Load();
-            return View(data);
+            ViewBag.Data = data;
+
+            return View();
         }
 
         [HttpPost]
         public async Task<IActionResult> UploadOfx(IFormFile ofxFile)
         {
             var data = _xmlService.Load();
+            ViewBag.Data = data;
 
             if (ofxFile == null || ofxFile.Length == 0)
                 return BadRequest("No file uploaded.");
@@ -60,7 +63,7 @@ namespace PFO_Web.Controllers
                         "yyyyMMdd",
                         CultureInfo.InvariantCulture),
                         Amount = decimal.Parse((string)x.Element("TRNAMT"), CultureInfo.InvariantCulture),
-                        FitId = (string)x.Element("FITID"),
+                        Id = (string)x.Element("FITID"),
                         Meta = (string)x.Element("MEMO")
                     })
                     .ToList();
@@ -75,7 +78,7 @@ namespace PFO_Web.Controllers
                 }
                 ViewBag.Message = $"{transactions.Count} transactions parsed successfully!";
                 
-                return View("Send", data);
+                return View("Send");
             }
         }
 
@@ -83,9 +86,10 @@ namespace PFO_Web.Controllers
 
         public IActionResult Process()
         {
+            var data = _xmlService.Load();
+            ViewBag.Data = data;
             var xmlContent = TempData["OfxString"]?.ToString();
             var xml = XDocument.Parse(xmlContent);
-            var data = _xmlService.Load();
 
             var transactions = xml.Descendants("STMTTRN")
                 .Select(x => new
@@ -94,22 +98,53 @@ namespace PFO_Web.Controllers
                     "yyyyMMdd", 
                     CultureInfo.InvariantCulture),
                     Amount = decimal.Parse((string)x.Element("TRNAMT"), CultureInfo.InvariantCulture),
-                    FitId = (string)x.Element("FITID"),
+                    Id = (string)x.Element("FITID"),
                     Meta = (string)x.Element("MEMO")
                 })
                 .ToList();
             ViewBag.Message = $"{transactions.Count} transactions parsed successfully!";
-            ViewBag.Transactions = transactions;
-            return View(data);
+            TempData["OfxString"] = xmlContent;
+            return View(transactions);
         }
 
         [HttpPost]
 
-        public IActionResult processCategories(List<Transaction> transactions)
+        public IActionResult processCategories(List<Transaction> transactionsCategorized)
         {
             var data = _xmlService.Load();
+            ViewBag.Data = data;
+            var xmlContent = TempData["OfxString"]?.ToString();
+            var xml = XDocument.Parse(xmlContent);
 
-            return View("Process", data);
+            var transactions = xml.Descendants("STMTTRN")
+                .Select(x => new
+                {
+                    Date = DateOnly.ParseExact(((string)x.Element("DTPOSTED") ?? "").Substring(0, ((string)x.Element("DTPOSTED") ?? "").Length - 14),
+                    "yyyyMMdd",
+                    CultureInfo.InvariantCulture),
+                    Amount = decimal.Parse((string)x.Element("TRNAMT"), CultureInfo.InvariantCulture),
+                    Id = (string)x.Element("FITID"),
+                    Meta = (string)x.Element("MEMO")
+                } )
+                .ToList();
+
+            if (transactionsCategorized.Any(tc => data.Transactions.Any(dt => dt.Id == tc.Id)))
+            {
+                ViewBag.Alert = "Some transactions already exist in the database.";
+                return View("Send", transactions);
+            }
+            else if (data.Transactions.Any()) {
+                data.Transactions.AddRange(transactionsCategorized);
+                _xmlService.Save(data);
+            }
+            else
+            {
+                data.Transactions = transactionsCategorized;
+                _xmlService.Save(data);
+            }
+
+                return View("Send", transactions);
+                
         }
 
     }

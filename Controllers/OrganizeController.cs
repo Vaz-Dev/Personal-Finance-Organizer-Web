@@ -13,7 +13,8 @@ namespace PFO_Web.Controllers
         public IActionResult NewCategory()
         {
             var data = _xmlService.Load();
-            return View(data);
+            ViewBag.Data = data;
+            return View();
         }
 
         [HttpPost]
@@ -21,6 +22,7 @@ namespace PFO_Web.Controllers
         public IActionResult NewCategoryForm(string categoryName, TransactionType type) 
         {
             var data = _xmlService.Load();
+            ViewBag.Data = data;
             var newCategory = new Category
             {
                 Id = data.Categories.Count > 0 ? data.Categories.Max(c => c.Id) + 1 : 1,
@@ -36,7 +38,7 @@ namespace PFO_Web.Controllers
                 data.Categories.Add(newCategory);
                 _xmlService.Save(data);
                 ViewBag.Success = "Category added successfully!";
-                return View("NewCategory",data);
+                return View("NewCategory");
             }
                 
         }

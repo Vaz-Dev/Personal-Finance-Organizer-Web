@@ -1,10 +1,11 @@
 ﻿
 @{
     ViewData["Title"] = "Send";
+    var data = (PFO_Web.Models.Data)ViewBag.Data;
 }
 
 <h1>Send</h1>
-<h2>@Model.Transactions.Count Existing transactions.</h2>
+<h2>@data.Transactions.Count Existing transactions.</h2>
 
 <form asp-action="UploadOfx" enctype="multipart/form-data" method="post" class="row">
     <div class="col">

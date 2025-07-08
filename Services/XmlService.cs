@@ -53,10 +53,11 @@ namespace PFO_Web.Services
                 data.Transactions = doc.Descendants("transaction")
                     .Select(t => new Transaction
                     {
-                        Id = (int)t.Element("id"),
+                        Id = (string)t.Element("id"),
                         Date = DateOnly.ParseExact(((string)t.Element("date")), "yyyyMMdd", null),
                         Amount = decimal.Parse((string)t.Element("amount")),
-                        Meta = (string)t.Element("meta")
+                        Meta = (string)t.Element("meta"),
+                        Category = data.Categories.FirstOrDefault(c => c.Id == (int)t.Element("categoryId"))
                     }
                     )
                     .ToList();
@@ -83,7 +84,8 @@ namespace PFO_Web.Services
                     new XElement("id", t.Id),
                     new XElement("date", t.Date.ToString("yyyyMMdd")),
                     new XElement("amount", t.Amount),
-                    new XElement("meta", t.Meta)
+                    new XElement("meta", t.Meta),
+                    new XElement("categoryId", t.Category?.Id ?? 0)
                 ))
             );
             doc.Save(_filePath);

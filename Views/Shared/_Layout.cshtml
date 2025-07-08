@@ -35,6 +35,13 @@
     </header>
     <div class="container">
         <main role="main" class="pb-3">
+            @if (ViewBag.Alert != null)
+            {
+            <script>
+                alert("@ViewBag.AlertMessage");
+            </script>
+            }
+
             @RenderBody()
         </main>
     </div>
