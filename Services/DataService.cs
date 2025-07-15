@@ -4,13 +4,13 @@ using PFO_Web.Models;
 
 namespace PFO_Web.Services
 {
-    public class XmlService
+    public class DataService
     {
 
         private readonly string _filePath;
 
 
-        public XmlService()
+        public DataService()
 
         {
 
@@ -89,6 +89,29 @@ namespace PFO_Web.Services
                 ))
             );
             doc.Save(_filePath);
+        }
+
+        public List<Transaction> Find(Data data, DateOnly initialDate, DateOnly lastDate)
+        {
+            var matchedTransactions = data.Transactions.Where(t => t.Date >= initialDate && t.Date <= lastDate)
+                .ToList();
+            return matchedTransactions;
+        }
+
+        public void UpdateTransactions(Data data, List<Transaction> newData)
+        {
+            foreach (var transaction in newData)
+            {
+                var existingTransaction = data.Transactions.FirstOrDefault(t => t.Id == transaction.Id);
+                if (existingTransaction != null)
+                {
+                    existingTransaction.Date = transaction.Date;
+                    existingTransaction.Amount = transaction.Amount;
+                    existingTransaction.Meta = transaction.Meta;
+                    existingTransaction.Category = transaction.Category;
+                }
+            }
+            Save(data);
         }
     }
 }

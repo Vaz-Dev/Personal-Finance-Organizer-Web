@@ -11,12 +11,12 @@ namespace PFO_Web.Controllers
     public class AddController : Controller
     {
 
-        private readonly XmlService _xmlService = new();
+        private readonly DataService _dataService = new();
 
         [HttpGet]
         public IActionResult Send()
         {
-            var data = _xmlService.Load();
+            var data = _dataService.Load();
             ViewBag.Data = data;
 
             return View();
@@ -25,7 +25,7 @@ namespace PFO_Web.Controllers
         [HttpPost]
         public async Task<IActionResult> UploadOfx(IFormFile ofxFile)
         {
-            var data = _xmlService.Load();
+            var data = _dataService.Load();
             ViewBag.Data = data;
 
             if (ofxFile == null || ofxFile.Length == 0)
@@ -59,7 +59,7 @@ namespace PFO_Web.Controllers
                 var transactions = xml.Descendants("STMTTRN")
                     .Select(x => new
                     {
-                        Date = DateTime.ParseExact(((string)x.Element("DTPOSTED") ?? "").Substring(0, ((string)x.Element("DTPOSTED") ?? "").Length - 14),
+                        Date = DateOnly.ParseExact(((string)x.Element("DTPOSTED") ?? "").Substring(0, ((string)x.Element("DTPOSTED") ?? "").Length - 14),
                         "yyyyMMdd",
                         CultureInfo.InvariantCulture),
                         Amount = decimal.Parse((string)x.Element("TRNAMT"), CultureInfo.InvariantCulture),
@@ -86,7 +86,7 @@ namespace PFO_Web.Controllers
 
         public IActionResult Process()
         {
-            var data = _xmlService.Load();
+            var data = _dataService.Load();
             ViewBag.Data = data;
             var xmlContent = TempData["OfxString"]?.ToString();
             var xml = XDocument.Parse(xmlContent);
@@ -111,7 +111,7 @@ namespace PFO_Web.Controllers
 
         public IActionResult processCategories(List<Transaction> transactionsCategorized)
         {
-            var data = _xmlService.Load();
+            var data = _dataService.Load();
             ViewBag.Data = data;
             var xmlContent = TempData["OfxString"]?.ToString();
             var xml = XDocument.Parse(xmlContent);
@@ -135,12 +135,12 @@ namespace PFO_Web.Controllers
             }
             else if (data.Transactions.Any()) {
                 data.Transactions.AddRange(transactionsCategorized);
-                _xmlService.Save(data);
+                _dataService.Save(data);
             }
             else
             {
                 data.Transactions = transactionsCategorized;
-                _xmlService.Save(data);
+                _dataService.Save(data);
             }
 
                 return View("Send", transactions);

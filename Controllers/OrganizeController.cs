@@ -7,12 +7,12 @@ namespace PFO_Web.Controllers
     public class OrganizeController : Controller
     {
 
-        private readonly XmlService _xmlService = new();
+        private readonly DataService _dataService = new();
 
         [HttpGet]
         public IActionResult NewCategory()
         {
-            var data = _xmlService.Load();
+            var data = _dataService.Load();
             ViewBag.Data = data;
             return View();
         }
@@ -21,7 +21,7 @@ namespace PFO_Web.Controllers
 
         public IActionResult NewCategoryForm(string categoryName, TransactionType type) 
         {
-            var data = _xmlService.Load();
+            var data = _dataService.Load();
             ViewBag.Data = data;
             var newCategory = new Category
             {
@@ -36,7 +36,7 @@ namespace PFO_Web.Controllers
             } else
             {
                 data.Categories.Add(newCategory);
-                _xmlService.Save(data);
+                _dataService.Save(data);
                 ViewBag.Success = "Category added successfully!";
                 return View("NewCategory");
             }
