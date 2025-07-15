@@ -4,7 +4,7 @@ using PFO_Web.Services;
 
 namespace PFO_Web.Controllers
 {
-    public class OrganizeController : Controller
+    public class CategoryController : Controller
     {
 
         private readonly DataService _dataService = new();

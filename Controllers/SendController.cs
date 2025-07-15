@@ -8,7 +8,7 @@ using PFO_Web.Models;
 
 namespace PFO_Web.Controllers
 {
-    public class AddController : Controller
+    public class SendController : Controller
     {
 
         private readonly DataService _dataService = new();
