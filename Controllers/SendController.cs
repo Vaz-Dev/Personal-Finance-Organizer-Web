@@ -109,7 +109,7 @@ namespace PFO_Web.Controllers
 
         [HttpPost]
 
-        public IActionResult processCategories(List<Transaction> transactionsCategorized)
+        public IActionResult processCategories(List<Transaction> transactionsCategorized, List<string> IgnoreIds)
         {
             var data = _dataService.Load();
             ViewBag.Data = data;
@@ -128,6 +128,7 @@ namespace PFO_Web.Controllers
                 } )
                 .ToList();
 
+            transactionsCategorized.RemoveAll(t => IgnoreIds.Contains(t.Id));
             if (transactionsCategorized.Any(tc => data.Transactions.Any(dt => dt.Id == tc.Id)))
             {
                 ViewBag.Alert = "Some transactions already exist in the database.";
