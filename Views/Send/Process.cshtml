@@ -17,37 +17,57 @@
 <form asp-action="processCategories" enctype="multipart/form-data" method="post" class="row">
 	@for (int i = 0; i < @Model.Count; i++)
 	{
-			
-			<div class="row mb-2">
-				<div class="col">
-							<input type="text" name="transactionsCategorized[@i].Meta" value="@Model[i].Meta" required/>
-				</div>
-				<div class="col">
-							<input type="text" name="transactionsCategorized[@i].Id" value="@Model[i].Id" hidden />
-				</div>
-				<div class="col">
-					<p>@Model[i].Date</p>
-							<input type="date" name="transactionsCategorized[@i].Date" value="@Model[i].Date.ToString("yyyy-MM-dd")" hidden />
-				</div>
-				<div class="col">
-					<p>@Model[i].Amount.ToString("C")</p>
-							<input type="hidden" name="transactionsCategorized[@i].Amount" value="@Model[i].Amount" />
-				</div>
-				<div class="col">
-					<input type="checkbox" name="IgnoreIds" value="@Model[i].Id"/>
-					Ignore this transaction? (use this for credit debt payments)
-							
-				</div>
-				<div class="col">
-						<select name="transactionsCategorized[@i].Category.Id">
-								<option value="" selected>Other</option>
-					@for (int x = 0; x < data.Categories.Count; x++)
-					{
-											<option value="@data.Categories[x].Id">@data.Categories[x].Name</option>
-					}
-					</select>
-				</div>
+
+		<div class="row mb-2">
+			<div class="col">
+				<input type="text" name="transactionsCategorized[@i].Meta" value="@Model[i].Meta" required/>
 			</div>
+			<div class="col">
+				<input type="text" name="transactionsCategorized[@i].Id" value="@Model[i].Id" hidden />
+			</div>
+			<div class="col">
+				<p>@Model[i].Date</p>
+				<input type="date" name="transactionsCategorized[@i].Date" value="@Model[i].Date.ToString("yyyy-MM-dd")" hidden />
+			</div>
+			<div class="col">
+				<p>@Model[i].Amount.ToString("C")</p>
+				<input type="hidden" name="transactionsCategorized[@i].Amount" value="@Model[i].Amount" />
+			</div>
+			<div class="col">
+				<input type="checkbox" name="IgnoreIds" value="@Model[i].Id"/>
+				Ignore this transaction? (use this for credit debt payments)
+
+			</div>
+			<div class="col">
+				@if (@Model[i].Amount >= 0 )
+				{
+						<select name="transactionsCategorized[@i].Category.Id">
+							<option value="" selected disabled>Select category</option>
+							@for (int x = 0; x < data.Categories.Count; x++)
+							{
+								if (data.Categories[x].Type == PFO_Web.Models.TransactionType.Income)
+								{
+									<option value="@data.Categories[x].Id">@data.Categories[x].Name</option>
+								}
+							}
+						</select>
+				}
+				else
+				{
+					<select name="transactionsCategorized[@i].Category.Id">
+						<option value="" selected disabled>Select category</option>
+						@for (int x = 0; x < data.Categories.Count; x++)
+						{
+							if (data.Categories[x].Type == PFO_Web.Models.TransactionType.Expense)
+							{
+								<option value="@data.Categories[x].Id">@data.Categories[x].Name</option>
+							}
+						}
+					</select>
+				}
+				
+			</div>
+		</div>
 
 		}
 		<button class="btn btn-primary mt-1" type="submit"> Done! </button>

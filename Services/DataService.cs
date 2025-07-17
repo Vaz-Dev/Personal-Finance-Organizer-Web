@@ -28,7 +28,18 @@ namespace PFO_Web.Services
             {
                 var doc = new XDocument(
                     new XElement("data",
-                        new XElement("categories"),
+                        new XElement("categories",
+                            new XElement("category",
+                                new XElement("id", 1),
+                                new XElement("name", "Other: Expense"),
+                                new XElement("transactionType", TransactionType.Expense.ToString())
+                            ),
+                            new XElement("category",
+                                new XElement("id", 2),
+                                new XElement("name", "Other: Income"),
+                                new XElement("transactionType", TransactionType.Income.ToString())
+                            )
+                        ),
                         new XElement("transactions")
                     )
                 );

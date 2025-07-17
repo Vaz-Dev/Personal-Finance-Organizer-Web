@@ -1,0 +1,48 @@
+﻿@{
+    ViewData["Title"] = "Delete Category";
+    var data = (PFO_Web.Models.Data)ViewBag.Data;
+}
+
+<h1>Delete Category</h1>
+<h2>@data.Categories.Count Existing categories.</h2>
+
+@if (ViewBag.Success != null)
+{
+		<div class="alert alert-success row mt-1">
+			<p class="col">@ViewBag.Success</p>
+			<form method="get" asp-action="DeleteCategory">
+				<button class="btn btn-success col" type="submit"> Delete another </button>
+			</form>
+		</div>
+}
+
+@if (ViewBag.Danger != null)
+{
+			<div class="alert alert-danger row mt-1">
+				<p class="col">@ViewBag.Danger</p>
+			</div>
+}
+
+<form asp-action="DeleteCategoryForm" enctype="multipart/form-data" method="post" class="col">
+    <div class="row">
+        <label class="col"> Select what category to delete:</label>
+		<select name="categoryToDeleteId" class="form-select col" required>
+			<option value="">Select Category</option>
+			@for (int i = 0; i < data.Categories.Count; i++)
+			{
+					<option value="@data.Categories[i].Id">@data.Categories[i].Name</option>
+			}
+			</select>
+    </div>
+	<div class="row mt-1">
+		<label class="col"> Select what category to send transactions to:</label>
+		<select name="categoryToReplaceId" class="form-select col" required>
+			<option value="">Select Category</option>
+			@for (int i = 0; i < data.Categories.Count; i++)
+			{
+						<option value="@data.Categories[i].Id">@data.Categories[i].Name</option>
+			}
+			</select>
+	</div>
+	<button class="btn btn-danger mt-1" type="submit"> Delete! </button>
+</form>
