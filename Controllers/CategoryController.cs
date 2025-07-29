@@ -65,10 +65,13 @@ namespace PFO_Web.Controllers
             {
                 ViewBag.Danger = "You cannot replace a category with itself.";
                 return View("DeleteCategory");
-            } else if (categoryToDelete.Type != categoryToReplace.Type) {
+            }
+            else if (categoryToDelete.Type != categoryToReplace.Type)
+            {
                 ViewBag.Danger = "You cannot replace a category with other of another type (Income or Expense).";
                 return View("DeleteCategory");
-            } else if (categoryToDelete.Id == 1 || categoryToDelete.Id == 2)
+            }
+            else if (categoryToDelete.Id == 1 || categoryToDelete.Id == 2)
             {
                 ViewBag.Danger = "You cannot delete the default categories.";
                 return View("DeleteCategory");
@@ -89,6 +92,16 @@ namespace PFO_Web.Controllers
                 ViewBag.Success = "Category deleted successfully!";
                 return View("DeleteCategory");
             }
+        }
+
+        [HttpGet]
+
+        public IActionResult ListCategories()
+        {
+            var data = _dataService.Load();
+            ViewBag.Data = data;
+            return View("ListCategories");
+
         }
     }
 }
