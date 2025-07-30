@@ -1,8 +1,10 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
+    var data = (PFO_Web.Models.Data)ViewBag.Data;
 }
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h2>@data.Categories.Count Existing categories.</h2>
+    <h2>@data.Transactions.Count Existing transactions.</h2>
 </div>
